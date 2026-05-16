@@ -1,0 +1,55 @@
+<?php
+// Function to create a sql connection.
+function getDB() {
+  $dbhost="10.9.0.6";
+  $dbuser="seed";
+  $dbpass="dees";
+  $dbname="sqllab_users";
+
+  // Create a DB connection
+  $conn = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
+  if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error . "\n");
+  }
+  return $conn;
+}
+
+$input_uname = $_GET['username'];
+$input_pwd = $_GET['Password'];
+$hashed_pwd = sha1($input_pwd);
+
+// create a connection
+$conn = getDB();
+
+// --- 修改區域 ---
+
+// 1. 準備 SQL 語句骨架，將變數替換為佔位符 (?)
+$stmt = $conn->prepare("SELECT id, name, eid, salary, ssn
+                        FROM credential
+                        WHERE name=? and Password=?");
+
+// 2. 綁定參數。"ss" 代表傳入兩個 string 型態的變數
+$stmt->bind_param("ss", $input_uname, $hashed_pwd);
+
+// 3. 執行查詢
+$stmt->execute();
+
+// 4. 取得查詢結果集，讓後面的 fetch_assoc() 可以正常運作
+$result = $stmt->get_result();
+
+// --- 修改區域結束 ---
+
+if ($result->num_rows > 0) {
+  // only take the first row
+  $firstrow = $result->fetch_assoc();
+  $id     = $firstrow["id"];
+  $name   = $firstrow["name"];
+  $eid    = $firstrow["eid"];
+  $salary = $firstrow["salary"];
+  $ssn    = $firstrow["ssn"];
+}
+
+// close the sql connection
+$stmt->close();
+$conn->close();
+?>
